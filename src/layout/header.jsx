@@ -27,6 +27,8 @@ function classNames(...classes) {
 
 export default function Header() {
   return (
+    <>
+    <h1>Nayeli</h1>
     <Disclosure as="nav" className="shadow dark:bg-[#240d06] bg-[#fef6f4]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
@@ -132,5 +134,6 @@ export default function Header() {
         </div>
       </DisclosurePanel>
     </Disclosure>
+    </>
   );
 }
