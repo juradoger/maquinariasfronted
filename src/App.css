@@ -1,0 +1,20 @@
+:root {
+  --text: #240d06;
+  --background: #fef6f4;
+  --primary: #f05a28;
+  --secondary: #f7931e;
+  --accent: #fff0bc;
+}
+
+html[data-theme="dark"] {
+  --text: #fef6f4;
+  --background: #240d06;
+  --primary: #f05a28;
+  --secondary: #f7931e;
+  --accent: #fff0bc;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
