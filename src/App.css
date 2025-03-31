@@ -13,8 +13,3 @@ html[data-theme="dark"] {
   --secondary: #f7931e;
   --accent: #fff0bc;
 }
-
-body {
-  background-color: var(--background);
-  color: var(--text);
-}

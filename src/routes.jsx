@@ -7,10 +7,12 @@ import Lista_maquinaria from "./pages/site/listamaquinaria"; // Corregido
 import Header from "./layout/header";
 import Footer from "./layout/footer";
 import Sidebar from "./layout/sidebar";
+import Maquinarias_page from "./pages/admin/maquinarias";
 
 const Mis_routes = () => {
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState(true);
   return (
+<<<<<<< HEAD
     <BrowserRouter>
       <Header />
       <Sidebar setExpand={setSideMenuIsExpand} />
@@ -28,6 +30,21 @@ const Mis_routes = () => {
       </div>
       <Footer />
     </BrowserRouter>
+=======
+    <>
+      <BrowserRouter>
+        <Header />
+        <Sidebar setExpand={setSideMenuIsExpand} />
+        <div className="container-fluid">
+          <Routes>
+            <Route path="/" element={<Inicio_page />} />
+            <Route path="/admin/roles" element={<Roles_page />} />
+            <Route path="/admin/maquinarias" element={<Maquinarias_page />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </>
+>>>>>>> e6881ae52febced7be8fa6038daf6a98330a42c7
   );
 };
 
