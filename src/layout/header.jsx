@@ -1,32 +1,59 @@
 import React from "react";
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-} from "@headlessui/react";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
-import ThemeToggle from "../custom/themeToggle";
-import LoginForm from "../custom/loginform";
+import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 
 const navigation = [
-  { name: "Inicio", href: "/", current: true },
-  { name: "Servicios", href: "/servicios", current: false },
-  { name: "Contacto", href: "/contacto", current: false },
+  { name: "Inicio", href: "/" },
+  { name: "Máquinas en Alquiler", href: "/maquinas" },
+  { name: "Administración", href: "/administracion" },
+  { name: "Contáctenos", href: "/contacto" },
+  { name: "Ayuda", href: "/ayuda" },
 ];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function Header() {
   return (
+<<<<<<< HEAD
+    <nav className="bg-warning shadow">
+      <div className="container-fluid px-0">
+        <div className="d-flex align-items-center">
+          {/* Logo con tamaño fijo */}
+          <div className="py-1 px-3">
+            <NavLink to="/" className="d-flex align-items-center">
+              <img
+                src="/src/assets/logo.png"
+                alt="RentMaq360 Logo"
+                style={{ height: "180px", width: "auto" }}
+              />
+            </NavLink>
+          </div>
+
+          {/* Navegación - mantiene espacio proporcional */}
+          <div className="flex-grow-1 d-flex justify-content-center">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                className={({ isActive }) => 
+                  `px-4 py-3 text-dark fw-bold text-decoration-none fs-5 ${
+                    isActive ? "text-white" : ""
+                  }`
+                }
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Íconos de usuario y logout */}
+          <div className="d-flex align-items-center gap-4 px-4">
+            <FaUserCircle size={28} className="text-dark" />
+            <FaSignOutAlt size={28} className="text-dark" />
+          </div>
+        </div>
+      </div>
+    </nav>
+=======
     <>
       <h1>Nayeli</h1>
       <Disclosure as="nav" className="shadow dark:bg-[#240d06] bg-[#fef6f4]">
@@ -142,5 +169,6 @@ export default function Header() {
         </DisclosurePanel>
       </Disclosure>
     </>
+>>>>>>> e6881ae52febced7be8fa6038daf6a98330a42c7
   );
 }
