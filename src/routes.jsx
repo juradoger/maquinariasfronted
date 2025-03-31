@@ -4,6 +4,7 @@ import Inicio_page from "./pages/site/inicio";
 import Roles_page from "./pages/admin/roles";
 import Header from "./layout/header";
 import Sidebar from "./layout/sidebar";
+import Maquinarias_page from "./pages/admin/maquinarias";
 
 const Mis_routes = () => {
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState(true);
@@ -12,14 +13,11 @@ const Mis_routes = () => {
       <BrowserRouter>
         <Header />
         <Sidebar setExpand={setSideMenuIsExpand} />
-        <div
-          className={`flex-1 min-h-screen mx-0 transition-all duration-300 ease-in-out ${
-            sideMenuIsExpand ? "md:ml-72" : "md:ml-20"
-          }`}
-        >
+        <div className="container-fluid">
           <Routes>
             <Route path="/" element={<Inicio_page />} />
             <Route path="/admin/roles" element={<Roles_page />} />
+            <Route path="/admin/maquinarias" element={<Maquinarias_page />} />
           </Routes>
         </div>
       </BrowserRouter>

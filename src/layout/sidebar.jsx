@@ -8,6 +8,14 @@ const Sidebar = () => {
       <NavLink to="/admin/roles">
         Roles
       </NavLink>
+      <br />
+      <NavLink to="/admin/maquinarias">
+        Maquinarias
+      </NavLink>
+      <br />
+      <NavLink to="/admin/usuarios">
+        Usuarios
+      </NavLink>
     </>
   );
 };
