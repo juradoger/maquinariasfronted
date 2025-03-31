@@ -1,107 +1,141 @@
 import React, { useState } from "react";
-import {
-  Description,
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+import { Form, Toast, ToastContainer } from "react-bootstrap";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { Login_Service } from "../services/Auth_service";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+import { red, green } from "@mui/material/colors";
 
 const LoginForm = () => {
-  let [isOpen, setIsOpen] = useState(false);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [showA, setShowA] = useState(false);
+  const [showB, setShowB] = useState(false);
+
+  const toggleShowA = () => setShowA(!showA);
+  const toggleShowB = () => setShowB(!showB);
+
+  // Usamos un solo estado 'data' para almacenar correo y password
+  const [data, setData] = useState({ correo: "", password: "" });
+  const [error, setError] = useState(""); // Para mostrar el error
+  const [loading, setLoading] = useState(false); // Para mostrar que la solicitud está en curso
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Evita que el formulario se recargue por defecto
+    setLoading(true); // Activamos el indicador de carga
+    setError(""); // Reseteamos cualquier error previo
+    setShowB(false);
+
+    // Llamada al servicio de login pasando el objeto data
+    const response = await Login_Service(data);
+
+    if (response.status === 200) {
+      console.log("Login exitoso:", response.data);
+      // Aquí puedes guardar el token de sesión o hacer la redirección
+      setShowA(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+    } else {
+      console.log(response);
+      setError(response.error); // Muestra el error si lo hay
+      setShowB(true);
+    }
+
+    setLoading(false); // Desactivamos el indicador de carga
+  };
+
+  // Función para manejar el cambio de valor en los campos de input
+  const handleChange = (e) => {
+    const { name, value } = e.target; // Extraemos el nombre y valor del campo
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value, // Actualizamos el campo correspondiente en 'data'
+    }));
+  };
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>Iniar sesion</button>
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="relative z-50"
+      <Button variant="primary" onClick={handleShow}>
+        Iniciar sesion
+      </Button>
+
+      <Modal
+        show={show}
+        fullscreen={true}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
       >
-        <DialogBackdrop
-          transition
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in "
-        />
-        <div className="fixed inset-0 flex z-50 w-screen items-center justify-center p-4">
-          <DialogPanel className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Inciar sesion
-              </h3>
-              <button onClick={() => setIsOpen(false)}>Cancel</button>
-            </div>
-            <form className="p-5 space-y-6">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Correo
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                </div>
-              </div>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formGroupEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter email"
+                name="correo" // El nombre del campo será 'correo' para coincidir con el estado
+                value={data.correo} // Usamos 'data.correo' para el valor
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formGroupPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                name="password" // El nombre del campo será 'password' para coincidir con el estado
+                value={data.password} // Usamos 'data.password' para el valor
+                onChange={handleChange}
+              />
+            </Form.Group>
 
-              <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm/6 font-medium text-gray-900"
-                  >
-                    Contraseña
-                  </label>
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-semibold text-indigo-600 hover:text-indigo-500"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
-                </div>
-                <div className="mt-2">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    autoComplete="current-password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign in
-                </button>
-              </div>
-            </form>
-            <div>
-              <div className="text-sm font-medium text-gray-500 dark:text-gray-300 px-12 pb-4">
-                No estás registrado?{" "}
-                <a
-                  href="#"
-                  className="text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Crear cuenta
-                </a>
-              </div>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
+            <Button variant="primary" type="submit" disabled={loading}>
+              {loading ? "Cargando..." : "Iniciar sesión"}
+            </Button>
+          </Form>
+          <Toast
+            show={showA}
+            onClose={toggleShowA}
+            className="position-fixed bottom-0 start-0 m-3 border-success-subtle"
+          >
+            <Toast.Header className="text-bg-success">
+              <WarningRoundedIcon sx={{ color: green[100] }} />
+              <strong className="ms-2 me-auto">
+                Inicio de sesión exitoso.
+              </strong>
+            </Toast.Header>
+          </Toast>
+          <Toast
+            show={showB}
+            onClose={toggleShowB}
+            className="position-fixed bottom-0 start-0 m-3 border-danger-subtle"
+            bg="danger-subtle"
+          >
+            <Toast.Header className="text-bg-danger">
+              <WarningRoundedIcon sx={{ color: red[100] }} />
+              <strong className="ms-2 me-auto">Error</strong>
+            </Toast.Header>
+            <Toast.Body>
+              <span className="fs-6">{error}</span>
+            </Toast.Body>
+          </Toast>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary">Understood</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
