@@ -1,6 +1,7 @@
 import $ from "jquery";
 
 const apiUrl = import.meta.env.VITE_API_URL; // Asegúrate de tener la URL de tu API correctamente configurada
+const token = localStorage.getItem("token");
 
 export const Login_Service = async (data) => {
   return new Promise((resolve) => {
@@ -13,7 +14,7 @@ export const Login_Service = async (data) => {
       statusCode: {
         200: function (data) {
           // Guardamos el token en sessionStorage
-          sessionStorage.setItem("token", data.token);
+          localStorage.setItem("token", data.token);
 
           // Guardamos el resto de la información en localStorage
           localStorage.setItem("user_id", data.id);
@@ -32,7 +33,11 @@ export const Login_Service = async (data) => {
         },
         400: function (data) {
           console.log(data.responseJSON);
-          resolve({ status: 400, error: "Errores de validación no especificados.", errors : data.responseJSON.errors});
+          resolve({
+            status: 400,
+            error: "Errores de validación no especificados.",
+            errors: data.responseJSON.errors,
+          });
         },
         401: function (data) {
           console.log(data.responseJSON.mensaje);
@@ -51,6 +56,40 @@ export const Login_Service = async (data) => {
         resolve({ status: xhr.status, error: xhr.responseText });
       },
       */
+    });
+  });
+};
+
+export const Perfil_Service = () => {
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${apiUrl}/Auth/perfil`,
+      method: "GET",
+      dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      statusCode: {
+        200: function (data) {
+          localStorage.setItem("perfil", JSON.stringify(data)); // Guardar en localStorage
+          resolve({ status: 200, data });
+        },
+        401: function () {
+          const error = "No autorizado. Verifique su sesión.";
+          resolve({ status: 401, error });
+        },
+        500: function () {
+          const error = "Error interno del servidor.";
+          resolve({ status: 500, error });
+        },
+        0: function () {
+          const error = "Sin conexión con el servidor.";
+          resolve({ status: 0, error });
+        },
+      },/*
+      error: function (xhr) {
+        resolve({ status: xhr.status, error: xhr.responseText });
+      },*/
     });
   });
 };

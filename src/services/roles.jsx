@@ -94,10 +94,10 @@ export const CreateRole = (roleData) => {
         0: function () {
           resolve({ status: 0, error: "Sin conexión con el servidor" });
         },
-      },
+      },/*
       error: function (xhr) {
         resolve({ status: xhr.status, error: xhr.responseText });
-      },
+      },*/
     });
   });
 };

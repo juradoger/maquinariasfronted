@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import { Login_Service } from "../services/Auth_service";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { red, green } from "@mui/material/colors";
+import { FaUserCircle, FaSignOutAlt, FaSignInAlt } from "react-icons/fa";
 
 const LoginForm = () => {
   const [show, setShow] = useState(false);
@@ -61,8 +62,8 @@ const LoginForm = () => {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Iniciar sesion
+      <Button variant="warning" size="lg" onClick={handleShow}>
+        <FaSignInAlt fontSize={35} className="text-black" />
       </Button>
 
       <Modal

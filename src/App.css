@@ -1,15 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;700&display=swap');
+
 :root {
-  --text: #240d06;
-  --background: #fef6f4;
-  --primary: #f05a28;
-  --secondary: #f7931e;
-  --accent: #fff0bc;
+  --text: #282C34;
+  --background: #FFFFFF;
+  --primary: #FF5500;
+  --secondary: #F79E1B;
+  --accent: #FFC107;
+  --dark-gray: #333333;
+  --black: #000000;
 }
 
 html[data-theme="dark"] {
-  --text: #fef6f4;
-  --background: #240d06;
-  --primary: #f05a28;
-  --secondary: #f7931e;
-  --accent: #fff0bc;
+  --text: #FFFFFF;
+  --background: #1E1E1E;
+  --primary: #FF5500;
+  --secondary: #F79E1B;
+  --accent: #FFC107;
+}
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--text);
+  background-color: var(--background);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--primary);
+}
+
+a {
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+button {
+  background-color: var(--primary);
+  color: var(--background);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: var(--secondary);
+}
+
+.mt-6 {
+  margin-top: 5.5rem !important;
+}
+
+@media (min-width: 992px) {
+  .mt-lg-6 {
+    margin-top: 4rem !important;
+  }
+}
+
+.navbar-toggler-icon {
+  color: #000000 !important;
+}
+
+.form-control:focus {
+  border-color: #fef486 !important;
+  box-shadow: 0 0 0 .25rem rgba(253, 229, 13, 0.25) !important
+}
+
+.dropdown-item.active, .dropdown-item:active {
+  color: #000 !important;
+  background-color: var(--secondary) !important;
 }

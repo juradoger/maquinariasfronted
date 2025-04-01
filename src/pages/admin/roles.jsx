@@ -16,9 +16,11 @@ const Roles_page = () => {
   }, []);
   return (
     <>
+      <div className="container-fluid py-3">
         <h1>Roles</h1>
-      <List_Rol datos={response} />
-      </>
+        <List_Rol datos={response} />
+      </div>
+    </>
   );
 };
 

@@ -43,7 +43,7 @@ const Maquinarias_page = () => {
 
   return (
     <>
-      <h1>Maquinarias</h1>
+      <div className="container-fluid py-3">
       <Toast
         show={showA}
         onClose={toggleShowA}
@@ -59,7 +59,8 @@ const Maquinarias_page = () => {
         </Toast.Body>
       </Toast>
 
-      {autorizado && <List_Maquinaria datos={response} />}
+      {autorizado && <List_Maquinaria datos={response.data} />}
+      </div>
     </>
   );
 };
