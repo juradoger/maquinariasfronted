@@ -19,10 +19,43 @@ export const RegisterUsuarioNew = (data) => {
           resolve({ status: 400, error: "Datos inválidos" });
         },
         500: function () {
-          resolve({ status: 500, error: "Este correo ya está afiliado a una cuenta existente" });
+          resolve({
+            status: 500,
+            error: "Este correo ya está afiliado a una cuenta existente",
+          });
         },
         0: function () {
           resolve({ status: 0, error: "Sin conexión con el servidor" });
+        },
+      } /*
+      error: function (xhr) {
+        resolve({ status: xhr.status, error: xhr.responseText });
+      },*/,
+    });
+  });
+};
+
+export const GetPerfil = () => {
+  const id = localStorage.getItem("user_id");
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${apiUrl}/Usuarios/${id}`,
+      method: "GET",
+      dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        500: function () {
+          const error = "Error interno del servidor.";
+          resolve({ status: 500, error });
+        },
+        0: function () {
+          const error = "Sin conexión con el servidor.";
+          resolve({ status: 0, error });
         },
       } /*
       error: function (xhr) {

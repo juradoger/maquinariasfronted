@@ -43,6 +43,7 @@ const formatMaquinariaData = (data) => ({
   ...data,
   detalles: JSON.stringify(data.detalles).replace(/"/g, '"'),
   tipo: JSON.stringify(data.tipo).replace(/"/g, '"'),
+  fotos: JSON.stringify(data.fotos).replace(/"/g, '"'),
 });
 
 export const CreateMaquinaria = (maquinariaData) => {
@@ -206,6 +207,128 @@ export const RestoreMaquinaria = (id) => {
       error: function (xhr) {
         resolve({ status: xhr.status, error: xhr.responseText });
       },*/,
+    });
+  });
+};
+
+export const UploadPortada = (id, file, setProgress) => {
+  return new Promise((resolve) => {
+    const formData = new FormData();
+    formData.append("portada", file);
+
+    $.ajax({
+      url: `${apiUrl}/Maquinarias/${id}/portada`,
+      method: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      xhr: function () {
+        const xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function (event) {
+          if (event.lengthComputable) {
+            const percentComplete = Math.round((event.loaded / event.total) * 100);
+            setProgress(percentComplete);
+          }
+        }, false);
+        return xhr;
+      },
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        400: function () {
+          const error = "Error al subir la imagen.";
+          resolve({ status: 400, error });
+        },
+        401: function () {
+          const error = "No autorizado. Verifique su sesión.";
+          resolve({ status: 401, error });
+        },
+        500: function () {
+          const error = "Error interno del servidor.";
+          resolve({ status: 500, error });
+        },
+        0: function () {
+          const error = "Sin conexión con el servidor.";
+          resolve({ status: 0, error });
+        },
+      },
+    });
+  });
+};
+
+export const UploadFotos = (id, files, setProgress) => {
+  return new Promise((resolve) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("fotos", file)); // Agregar múltiples archivos
+
+    $.ajax({
+      url: `${apiUrl}/Maquinarias/${id}/fotos`,
+      method: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      xhr: function () {
+        const xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener(
+          "progress",
+          function (event) {
+            if (event.lengthComputable) {
+              const percentComplete = Math.round(
+                (event.loaded / event.total) * 100
+              );
+              setProgress(percentComplete);
+            }
+          },
+          false
+        );
+        return xhr;
+      },
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        400: function () {
+          resolve({ status: 400, error: "Error al subir las imágenes." });
+        },
+        401: function () {
+          resolve({ status: 401, error: "No autorizado. Verifique su sesión." });
+        },
+        500: function () {
+          resolve({ status: 500, error: "Error interno del servidor." });
+        },
+        0: function () {
+          resolve({ status: 0, error: "Sin conexión con el servidor." });
+        },
+      },
+    });
+  });
+};
+
+export const FiltrarMaquinarias = (filtros) => {
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${apiUrl}/Filtrar/maquinarias`,
+      method: "GET",
+      dataType: "json",
+      data: filtros, // Pasamos los filtros como parámetros de consulta
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        500: function () {
+          resolve({ status: 500, error: "Error interno del servidor." });
+        },
+        0: function () {
+          resolve({ status: 0, error: "Sin conexión con el servidor." });
+        },
+      },
     });
   });
 };

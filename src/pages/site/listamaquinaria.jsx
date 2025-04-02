@@ -1,47 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FiltrarMaquinarias } from "../../services/maquinarias";
+import { useNavigate } from "react-router-dom";
 
 const MaquinariasList = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const maquinarias = [
-    {
-      id: 1,
-      nombre: "Excavador",
-      tipo: "Maquinaria de trabajo",
-      rating: 5,
-      imagen: "/src/assets/excavador.jpg",
-    },
-    {
-      id: 2,
-      nombre: "Excavador",
-      tipo: "Maquinaria de trabajo",
-      rating: 5,
-      imagen: "/src/assets/excavador.jpg",
-    },
-    {
-      id: 3,
-      nombre: "Excavador",
-      tipo: "Maquinaria de trabajo",
-      rating: 5,
-      imagen: "/src/assets/excavador.jpg",
-    },
-    {
-      id: 4,
-      nombre: "Excavador",
-      tipo: "Maquinaria de trabajo",
-      rating: 5,
-      imagen: "/src/assets/excavador.jpg",
-    },
-    {
-      id: 5,
-      nombre: "Excavador",
-      tipo: "Maquinaria de trabajo",
-      rating: 5,
-      imagen: "/src/assets/excavador.jpg",
-    },
-  ];
-
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < rating; i++) {
@@ -49,342 +11,214 @@ const MaquinariasList = () => {
     }
     return stars;
   };
+  const [filtros, setFiltros] = useState({
+    codigo: "",
+    nombre: "",
+    marca: "",
+    estado: "",
+    tipo: "",
+    costoMin: null,
+    costoMax: null,
+    antiguedad: "",
+  });
 
-  const changePage = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  useEffect(() => {
+    fetchFiltrar();
+  }, []);
+
+  const fetchFiltrar = async () => {
+    const result = await FiltrarMaquinarias(filtros);
+    setData(result.data || []);
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFiltros({ ...filtros, [name]: value });
+  };
+
+  const handleFiltrar = () => {
+    setCurrentPage(1);
+    fetchFiltrar();
+  };
+
+  const handleLimpiar = () => {
+    setFiltros({
+      codigo: "",
+      nombre: "",
+      marca: "",
+      estado: "",
+      tipo: "",
+      costoMin: "",
+      costoMax: "",
+      antiguedad: "",
+    });
+    setCurrentPage(1);
+    fetchFiltrar();
+  };
+
+  const totalItems = data.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const maquinariasPaginadas = data.slice(startIndex, endIndex);
+
+  const handlePageClick = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const navigate = useNavigate();
+  const setMaquinariaSeleccionada = (e) =>{
+    localStorage.setItem("maquinaria", JSON.stringify(e));
+    navigate("/detalle");
+  }
 
   return (
     <div className="py-5" style={{ backgroundColor: "#1c1c1c", color: "#fff" }}>
       <div className="container">
+        <h1 className="text-warning">Maquinarias en Alquiler</h1>
         <div className="row">
-          {/* Título principal */}
-          <div className="col-12 mb-4">
-            <h1 className="text-warning" style={{ fontSize: "2.5rem" }}>
-              Maquinarias <span style={{ color: "#fff" }}>en</span>
-              <div style={{ color: "#FFC107", fontSize: "2.8rem" }}>
-                Alquiler
-              </div>
-            </h1>
-          </div>
-
           <div className="col-md-9">
             <div className="row">
-              <div className="col-md-6 mb-4">
-                <div
-                  className="card border-warning h-100"
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/api/placeholder/400/300"
-                    className="card-img-top"
-                    alt="Excavador"
-                  />
-                  <div className="card-body text-center">
-                    <div className="mb-2">{renderStars(5)}</div>
-                    <h5 className="card-title fw-bold text-dark">Excavador</h5>
-                    <p className="card-text text-muted">
-                      Maquinaria de trabajo
-                    </p>
-                    <button className="btn btn-warning text-dark px-4 rounded-pill">
-                      Ver más <i className="fas fa-eye ms-1"></i>
-                    </button>
+              {maquinariasPaginadas.map((maquinaria) => (
+                <div key={maquinaria.id} className="col-md-4 mb-4">
+                  <div className="card text-bg-light border-warning h-100">
+                    <img
+                      src={maquinaria.portada || "/api/placeholder/400/300"}
+                      className="card-img-top"
+                      alt={maquinaria.nombre}
+                    />
+                    <div className="card-body text-center">
+                      <div className="mb-2">
+                        {renderStars(maquinaria.puntuacionPromedio)}
+                      </div>
+                      <h5 className="card-title">{maquinaria.nombre}</h5>
+                      <p className="card-text">{maquinaria.descripcion}</p>
+                      <button className="btn btn-warning" onClick={() => setMaquinariaSeleccionada(maquinaria)}>
+                        Ver más <i className="fas fa-eye ms-1"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="col-md-6 mb-4">
-                <div
-                  className="card border-warning h-100"
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/api/placeholder/400/300"
-                    className="card-img-top"
-                    alt="Excavador"
-                  />
-                  <div className="card-body text-center">
-                    <div className="mb-2">{renderStars(5)}</div>
-                    <h5 className="card-title fw-bold text-dark">Excavador</h5>
-                    <p className="card-text text-muted">
-                      Maquinaria de trabajo
-                    </p>
-                    <button className="btn btn-warning text-dark px-4 rounded-pill">
-                      Ver más <i className="fas fa-eye ms-1"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-4">
-                <div
-                  className="card border-warning h-100"
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/api/placeholder/400/300"
-                    className="card-img-top"
-                    alt="Excavador"
-                  />
-                  <div className="card-body text-center">
-                    <div className="mb-2">{renderStars(5)}</div>
-                    <h5 className="card-title fw-bold text-dark">Excavador</h5>
-                    <p className="card-text text-muted">
-                      Maquinaria de trabajo
-                    </p>
-                    <button
-                      className="btn btn-warning text-dark px-3 rounded-pill"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      Ver más <i className="fas fa-eye ms-1"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-4">
-                <div
-                  className="card border-warning h-100"
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/api/placeholder/400/300"
-                    className="card-img-top"
-                    alt="Excavador"
-                  />
-                  <div className="card-body text-center">
-                    <div className="mb-2">{renderStars(5)}</div>
-                    <h5 className="card-title fw-bold text-dark">Excavador</h5>
-                    <p className="card-text text-muted">
-                      Maquinaria de trabajo
-                    </p>
-                    <button
-                      className="btn btn-warning text-dark px-3 rounded-pill"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      Ver más <i className="fas fa-eye ms-1"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-4">
-                <div
-                  className="card border-warning h-100"
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <img
-                    src="/api/placeholder/400/300"
-                    className="card-img-top"
-                    alt="Excavador"
-                  />
-                  <div className="card-body text-center">
-                    <div className="mb-2">{renderStars(5)}</div>
-                    <h5 className="card-title fw-bold text-dark">Excavador</h5>
-                    <p className="card-text text-muted">
-                      Maquinaria de trabajo
-                    </p>
-                    <button
-                      className="btn btn-warning text-dark px-3 rounded-pill"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      Ver más <i className="fas fa-eye ms-1"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-12 mt-3 d-flex justify-content-center">
-                <nav aria-label="Paginación de maquinarias">
-                  <ul className="pagination">
-                    <li className="page-item">
-                      <a className="page-link" href="#" aria-label="Anterior">
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            backgroundColor: "#1c1c1c",
-                            color: "#FFC107",
-                          }}
-                        >
-                          &lsaquo;
-                        </span>
-                      </a>
-                    </li>
-                    <li className="page-item active">
-                      <a
-                        className="page-link"
-                        href="#"
-                        style={{
-                          backgroundColor: "#FFC107",
-                          borderColor: "#FFC107",
-                          color: "#000",
-                        }}
-                      >
-                        1
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a
-                        className="page-link"
-                        href="#"
-                        style={{
-                          backgroundColor: "#333",
-                          borderColor: "#333",
-                          color: "#FFC107",
-                        }}
-                      >
-                        2
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a
-                        className="page-link"
-                        href="#"
-                        style={{
-                          backgroundColor: "#333",
-                          borderColor: "#333",
-                          color: "#FFC107",
-                        }}
-                      >
-                        3
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a
-                        className="page-link"
-                        href="#"
-                        style={{
-                          backgroundColor: "#333",
-                          borderColor: "#333",
-                          color: "#FFC107",
-                        }}
-                      >
-                        4
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a
-                        className="page-link"
-                        href="#"
-                        style={{
-                          backgroundColor: "#333",
-                          borderColor: "#333",
-                          color: "#FFC107",
-                        }}
-                      >
-                        5
-                      </a>
-                    </li>
-                    <li className="page-item">
-                      <a className="page-link" href="#" aria-label="Siguiente">
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            backgroundColor: "#1c1c1c",
-                            color: "#FFC107",
-                          }}
-                        >
-                          &rsaquo;
-                        </span>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
+              ))}
             </div>
+            <nav>
+              <ul className="pagination justify-content-center">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageClick(currentPage - 1)}
+                  >
+                    &lsaquo;
+                  </button>
+                </li>
+                {[...Array(totalPages)].map((_, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === index + 1 ? "bg-warning" : ""
+                    }`}
+                  >
+                    <button
+                      className={`page-link text-white ${
+                        currentPage === index + 1 ? "bg-warning" : ""
+                      }`}
+                      onClick={() => handlePageClick(index + 1)}
+                    >
+                      {index + 1}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageClick(currentPage + 1)}
+                  >
+                    &rsaquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
 
           {/* Filtro lateral */}
           <div className="col-md-3">
-            <div className="card bg-light p-3">
+            <div className="card text-bg-light p-3">
+              <span className="text-secondary">Filtrar</span>
               <h5 className="mb-3">Filtrar las maquinarias</h5>
 
-              <div className="mb-3">
-                <h6 className="d-flex align-items-center">
-                  <span className="me-2">Tipo</span>
-                  <i className="fas fa-chevron-circle-down text-secondary"></i>
-                </h6>
-                <input
-                  type="text"
-                  className="form-control form-control-sm"
-                  placeholder="Tipo de Maquinaria"
-                />
-              </div>
-
-              <div className="mb-3">
-                <h6 className="d-flex align-items-center">
-                  <span className="me-2">Marca</span>
-                  <i className="fas fa-chevron-circle-down text-secondary"></i>
-                </h6>
-                <input
-                  type="text"
-                  className="form-control form-control-sm"
-                  placeholder="Marca de Maquinaria"
-                />
-              </div>
-
-              <div className="mb-3">
-                <h6 className="d-flex align-items-center">
-                  <span className="me-2">Modelo</span>
-                  <i className="fas fa-chevron-circle-down text-secondary"></i>
-                </h6>
-                <input
-                  type="text"
-                  className="form-control form-control-sm"
-                  placeholder="Modelo de Maquinaria"
-                />
-              </div>
-
-              <div className="mb-3">
-                <h6 className="d-flex align-items-center">
-                  <span className="me-2">Operador</span>
-                </h6>
-                <div className="form-check form-switch">
+              {[
+                { label: "Código", name: "codigo" },
+                { label: "Nombre", name: "nombre" },
+                { label: "Marca", name: "marca" },
+                { label: "Estado", name: "estado" },
+                { label: "Tipo", name: "tipo" },
+                { label: "Antigüedad", name: "antiguedad" },
+              ].map(({ label, name }) => (
+                <div className="mb-3" key={name}>
+                  <h6 className="d-flex align-items-center">
+                    <span className="me-2">{label}</span>
+                  </h6>
                   <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="operadorSwitch"
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder={label}
+                    name={name}
+                    value={filtros[name]}
+                    onChange={handleChange}
                   />
                 </div>
+              ))}
+              {/*
+              <div className="mb-3">
+                <h6 className="d-flex align-items-center">
+                  <span className="me-2">Costo mínimo</span>
+                </h6>
+                <input
+                  type="number"
+                  className="form-control form-control-sm"
+                  placeholder="Costo mínimo"
+                  name="costoMin"
+                  value={filtros.costoMin}
+                  onChange={handleChange}
+                />
               </div>
 
               <div className="mb-3">
                 <h6 className="d-flex align-items-center">
-                  <span className="me-2">Ubicación</span>
-                  <i className="fas fa-chevron-circle-down text-secondary"></i>
+                  <span className="me-2">Costo máximo</span>
                 </h6>
                 <input
-                  type="text"
+                  type="number"
                   className="form-control form-control-sm"
-                  placeholder="Nombre de Ubicación"
+                  placeholder="Costo máximo"
+                  name="costoMax"
+                  value={filtros.costoMax}
+                  onChange={handleChange}
                 />
-              </div>
+              </div>*/}
 
               <div className="d-grid gap-2 mt-4">
-                <button className="btn btn-outline-secondary btn-sm">
-                  Clear all
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={handleLimpiar}
+                >
+                  Limpiar filtros
                 </button>
-                <button className="btn btn-dark btn-sm">Result filter</button>
+                <button className="btn btn-dark btn-sm" onClick={handleFiltrar}>
+                  Aplicar filtros
+                </button>
               </div>
             </div>
           </div>

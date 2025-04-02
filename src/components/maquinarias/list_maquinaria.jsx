@@ -19,6 +19,7 @@ import {
   DeleteMaquinaria,
   RestoreMaquinaria,
 } from "../../services/maquinarias";
+import ViewMaquinaria from "./viewMaquinaria";
 
 const List_Maquinaria = ({ datos }) => {
   const [show, setShow] = useState(false);
@@ -32,6 +33,7 @@ const List_Maquinaria = ({ datos }) => {
   const [verCosto, setVerCosto] = useState("costoUsoHora");
 
   const [showEdit, setShowEdit] = useState(false);
+  const [showView, setShowView] = useState(false);
   const [selectedMaquinaria, setSelectedMaquinaria] = useState(null);
 
   const handleShowEdit = (maquinaria) => {
@@ -41,6 +43,17 @@ const List_Maquinaria = ({ datos }) => {
 
   const handleCloseEdit = () => {
     setShowEdit(false);
+    setSelectedMaquinaria(null);
+  };
+
+  const handleShowView = (maquinaria) => {
+    setSelectedMaquinaria(maquinaria);
+    setShowView(true);
+  };
+
+  const handleCloseView = () => {
+    window.location.reload();
+    setShowView(false);
     setSelectedMaquinaria(null);
   };
 
@@ -142,6 +155,7 @@ const List_Maquinaria = ({ datos }) => {
                   <Button
                     variant="link"
                     className="d-flex align-items-center w-100 link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover"
+                    onClick={() => handleShowView(maquinaria)}
                   >
                     <div className="flex-shrink-0">
                       {maquinaria.portada && (
@@ -198,7 +212,10 @@ const List_Maquinaria = ({ datos }) => {
                   style={{ verticalAlign: "middle" }}
                 >
                   <ButtonGroup>
-                    <Button variant="warning text-nowrap">
+                    <Button
+                      variant="warning text-nowrap"
+                      onClick={() => handleShowView(maquinaria)}
+                    >
                       <VisibilityRoundedIcon /> Ver
                     </Button>
                     {(datos.permiso.edit || datos.permiso["delete"]) && (
@@ -289,6 +306,20 @@ const List_Maquinaria = ({ datos }) => {
             <FaRegSave fontSize={22} /> Confirmar
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showView}
+        onHide={handleCloseView}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+        fullscreen={true}
+        scrollable
+      >
+        <ViewMaquinaria
+          maquinaria={selectedMaquinaria}
+          onClose={handleCloseView}
+        />
       </Modal>
     </>
   );

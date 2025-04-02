@@ -11,6 +11,7 @@ import ContactUsPage from "./pages/site/contactos";
 import VistaPerfil from "./pages/site/vistaperfil";
 import MaquinariasList from "./pages/site/listamaquinaria";
 import RolesPermisos from "./pages/admin/rolespermisos";
+import DetalleMaquinaria from "./pages/site/detalle-maquinaria";
 
 const Mis_routes = () => {
   const [sideMenuIsExpand, setSideMenuIsExpand] = useState(true);
@@ -22,9 +23,10 @@ const Mis_routes = () => {
           <Routes>
             <Route path="/" element={<Inicio_page />} />
             <Route path="/ayuda" element={<Ayuda_page />} />
-            <Route path="/lista" element={< MaquinariasList />} />
-            <Route path="/contacto" element={<ContactUsPage/>} />
-            <Route path="/usuario/perfil" element={<VistaPerfil/>} />
+            <Route path="/lista" element={<MaquinariasList />} />
+            <Route path="/contacto" element={<ContactUsPage />} />
+            <Route path="/detalle" element={<DetalleMaquinaria />} />
+            <Route path="/usuario/perfil" element={<VistaPerfil />} />
             {/* Corregido */}
             <Route path="/admin/roles" element={<Roles_page />} />
             <Route path="/admin/maquinarias" element={<Maquinarias_page />} />

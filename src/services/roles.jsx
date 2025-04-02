@@ -1,7 +1,7 @@
 import React from "react";
 import $ from "jquery";
 
-const apiUrl = import.meta.env.VITE_API_URL;  
+const apiUrl = import.meta.env.VITE_API_URL;
 const token = localStorage.getItem("token");
 
 const Roles_service = async () => {
@@ -19,6 +19,12 @@ const Roles_service = async () => {
         },
         0: function () {
           resolve({ status: 0, error: "Sin conexión con el servidor" });
+        },
+        401: function () {
+          resolve({
+            status: 401,
+            error: "No autorizado. Verifique su sesión.",
+          });
         },
         500: function () {
           resolve({ status: 500, error: "Error interno del servidor" });
@@ -46,6 +52,12 @@ export const GetRole = async (roleId) => {
         200: function (data) {
           resolve({ status: 200, data });
         },
+        401: function () {
+          resolve({
+            status: 401,
+            error: "No autorizado. Verifique su sesión.",
+          });
+        },
         404: function () {
           resolve({ status: 404, error: "Rol no encontrado" });
         },
@@ -65,7 +77,10 @@ export const GetRole = async (roleId) => {
 
 const formatRoleData = (roleData) => ({
   ...roleData,
-  permisos: JSON.stringify(filterPermisos(roleData.permisos)).replace(/"/g, '\"'),
+  permisos: JSON.stringify(filterPermisos(roleData.permisos)).replace(
+    /"/g,
+    '"'
+  ),
 });
 
 const filterPermisos = (permisos) => {
@@ -98,16 +113,22 @@ export const CreateRole = (roleData) => {
         400: function () {
           resolve({ status: 400, error: "Datos inválidos" });
         },
+        401: function () {
+          resolve({
+            status: 401,
+            error: "No autorizado. Verifique su sesión.",
+          });
+        },
         500: function () {
           resolve({ status: 500, error: "Error interno del servidor" });
         },
         0: function () {
           resolve({ status: 0, error: "Sin conexión con el servidor" });
         },
-      },/*
+      } /*
       error: function (xhr) {
         resolve({ status: xhr.status, error: xhr.responseText });
-      },*/
+      },*/,
     });
   });
 };
@@ -126,11 +147,17 @@ export const UpdateRole = (roleId, roleData) => {
         Authorization: `Bearer ${token}`, // Enviar el token en el header
       },
       statusCode: {
-        204: function (data) {
-          resolve({ status: 204, data }); // Respuesta exitosa de actualización
+        200: function (data) {
+          resolve({ status: 200, data }); // Respuesta exitosa de actualización
         },
         400: function () {
           resolve({ status: 400, error: "Datos inválidos" });
+        },
+        401: function () {
+          resolve({
+            status: 401,
+            error: "No autorizado. Verifique su sesión.",
+          });
         },
         404: function () {
           resolve({ status: 404, error: "Rol no encontrado" });

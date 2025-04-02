@@ -121,7 +121,7 @@ export default function Header() {
                     title="Máquinas en Alquiler"
                     id={`offcanvasNavbarDropdown-expand-${expand}`}
                   >
-                    <NavDropdown.Item className="fs-5">
+                    <NavDropdown.Item className="fs-5" as={NavLink} to="/lista">
                       Buscar Maquinarias
                     </NavDropdown.Item>
                     <NavDropdown.Item className="fs-5">
