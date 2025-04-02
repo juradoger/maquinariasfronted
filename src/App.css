@@ -53,7 +53,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--secondary);
+  background-color: var(--secondary) !important;
 }
 
 .mt-6 {
@@ -78,4 +78,213 @@ button:hover {
 .dropdown-item.active, .dropdown-item:active {
   color: #000 !important;
   background-color: var(--secondary) !important;
+}
+
+
+
+.login-container {
+  background-color: #121212;
+  color: white;
+}
+
+/* Estilos para la sección del formulario */
+.form-section {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.form-content {
+  width: 100%;
+  max-width: 400px;
+}
+
+.welcome-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.platform-text {
+  font-size: 1.5rem;
+  color: #ffa500;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-input {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  border-radius: 4px !important;
+  background-color: #222 !important;
+  border: none !important;
+  color: white !important;
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+}
+
+.remember-label input {
+  margin-right: 0.5rem;
+}
+
+.forgot-link {
+  color: #ffa500;
+  text-decoration: none;
+}
+
+.login-button {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  background-color: #ffc107 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  color: black !important;
+  cursor: pointer !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.register-button-container {
+  margin-bottom: 1rem;
+}
+
+.register-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  color: black;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 0.5rem;
+}
+
+.signup-text {
+  font-size: 0.9rem;
+  text-align: center;
+  color: #ccc;
+}
+
+.signup-link {
+  color: #ffa500;
+  text-decoration: none;
+}
+
+/* Estilos para la sección del logo */
+.logo-section {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #121212;
+}
+
+.logo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.triangle-logo {
+  width: 250px;
+  height: 250px;
+  background-color: #ffa500;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.excavator-image {
+  width: 140%;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-40%);
+}
+
+.brand-text {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.brand-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffa500;
+  margin-bottom: 0.5rem;
+}
+
+.percentage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.flags {
+  display: flex;
+  margin-left: 0.5rem;
+}
+
+.flag {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 2px;
+}
+
+.flag1 {
+  background-color: #E30A17;
+  /* Rojo */
+}
+
+.flag2 {
+  background-color: #FFDA44;
+  /* Amarillo */
+}
+
+.flag3 {
+  background-color: #009B3A;
+  /* Verde */
+}
+
+.brand-slogan {
+  color: #00ab55;
+  font-size: 0.9rem;
+  text-align: center;
 }

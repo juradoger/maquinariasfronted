@@ -184,9 +184,6 @@ const List_Rol = ({ datos }) => {
           ))}
         </tbody>
       </table>
-
-      <p>Status: {datos.status}</p>
-      <pre>{JSON.stringify(datos.data || datos.error, null, 2)}</pre>
     </>
   );
 };

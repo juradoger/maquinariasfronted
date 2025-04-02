@@ -2,6 +2,7 @@ import React from "react";
 import $ from "jquery";
 
 const apiUrl = import.meta.env.VITE_API_URL;  
+const token = localStorage.getItem("token");
 
 const Roles_service = async () => {
   return new Promise((resolve) => {
@@ -9,6 +10,9 @@ const Roles_service = async () => {
       url: `${apiUrl}/Roles`,
       method: "GET",
       dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el header
+      },
       statusCode: {
         200: function (data) {
           resolve({ status: 200, data });
@@ -35,6 +39,9 @@ export const GetRole = async (roleId) => {
       url: `${apiUrl}/Roles/${roleId}`, // Se añade el ID en la URL
       method: "GET",
       dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el header
+      },
       statusCode: {
         200: function (data) {
           resolve({ status: 200, data });
@@ -81,6 +88,9 @@ export const CreateRole = (roleData) => {
       method: "POST",
       data: JSON.stringify(data), // Convertimos los datos a JSON
       contentType: "application/json", // Indicamos que estamos enviando datos JSON
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el header
+      },
       statusCode: {
         201: function (data) {
           resolve({ status: 201, data }); // Respuesta exitosa de creación
@@ -112,6 +122,9 @@ export const UpdateRole = (roleId, roleData) => {
       method: "PUT", // Método PUT para actualización
       data: JSON.stringify(data), // Convertimos los datos a JSON
       contentType: "application/json", // Indicamos que estamos enviando datos JSON
+      headers: {
+        Authorization: `Bearer ${token}`, // Enviar el token en el header
+      },
       statusCode: {
         204: function (data) {
           resolve({ status: 204, data }); // Respuesta exitosa de actualización

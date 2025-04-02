@@ -148,10 +148,10 @@ export default function Header() {
                   </NavDropdown>
                 )}
                 <NavLink
-                  to="/"
+                  to="/contacto"
                   className="text-black fs-5 fw-bolder text-nowrap nav-link"
                 >
-                  Contactanos
+                  Contactenos
                 </NavLink>
                 <NavLink
                   to="/ayuda"
@@ -167,9 +167,9 @@ export default function Header() {
           {!perfil && <LoginForm />}
           {perfil && (
             <>
-              <Button variant="warning" size="lg">
+              <NavLink to="/usuario/perfil" className="btn btn-warning btn-lg">
                 <FaUserCircle fontSize={35} className="text-black" />
-              </Button>
+              </NavLink>
               <Button variant="warning" size="lg" onClick={handleLogout}>
                 <FaSignOutAlt fontSize={35} className="text-black" />
               </Button>

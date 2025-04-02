@@ -71,7 +71,6 @@ export const Perfil_Service = () => {
       },
       statusCode: {
         200: function (data) {
-          localStorage.setItem("perfil", JSON.stringify(data)); // Guardar en localStorage
           resolve({ status: 200, data });
         },
         401: function () {

@@ -143,3 +143,69 @@ export const UpdateMaquinaria = (maquinariaData) => {
     });
   });
 };
+
+export const DeleteMaquinaria = (id) => {
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${apiUrl}/Maquinarias/${id}`,
+      method: "DELETE",
+      dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        401: function () {
+          const error = "No autorizado. Verifique su sesión.";
+          resolve({ status: 401, error });
+        },
+        500: function () {
+          const error = "Error interno del servidor.";
+          resolve({ status: 500, error });
+        },
+        0: function () {
+          const error = "Sin conexión con el servidor.";
+          resolve({ status: 0, error });
+        },
+      } /*
+      error: function (xhr) {
+        resolve({ status: xhr.status, error: xhr.responseText });
+      },*/,
+    });
+  });
+};
+
+export const RestoreMaquinaria = (id) => {
+  return new Promise((resolve) => {
+    $.ajax({
+      url: `${apiUrl}/Maquinarias/restore/${id}`,
+      method: "PUT",
+      dataType: "json",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      statusCode: {
+        200: function (data) {
+          resolve({ status: 200, data });
+        },
+        401: function () {
+          const error = "No autorizado. Verifique su sesión.";
+          resolve({ status: 401, error });
+        },
+        500: function () {
+          const error = "Error interno del servidor.";
+          resolve({ status: 500, error });
+        },
+        0: function () {
+          const error = "Sin conexión con el servidor.";
+          resolve({ status: 0, error });
+        },
+      } /*
+      error: function (xhr) {
+        resolve({ status: xhr.status, error: xhr.responseText });
+      },*/,
+    });
+  });
+};

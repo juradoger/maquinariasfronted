@@ -12,10 +12,23 @@ import {
   Modal,
   Table,
 } from "react-bootstrap";
+import { FaTimes, FaRegSave } from "react-icons/fa";
 import New_Maquinaria from "./new_maquinaria";
 import EditMaquinaria from "./EditMaquinaria";
+import {
+  DeleteMaquinaria,
+  RestoreMaquinaria,
+} from "../../services/maquinarias";
 
 const List_Maquinaria = ({ datos }) => {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (maquinaria) => {
+    setSelectedMaquinaria(maquinaria);
+    setShow(true);
+  };
+
   const [verCosto, setVerCosto] = useState("costoUsoHora");
 
   const [showEdit, setShowEdit] = useState(false);
@@ -30,6 +43,26 @@ const List_Maquinaria = ({ datos }) => {
     setShowEdit(false);
     setSelectedMaquinaria(null);
   };
+
+  const cancelRestore = async (e) => {
+    if (selectedMaquinaria.deletedAt) {
+      const response = await RestoreMaquinaria(selectedMaquinaria?.id);
+
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.log(response);
+      }
+    } else {
+      const response = await DeleteMaquinaria(selectedMaquinaria?.id);
+
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.log(response);
+      }
+    }
+  };
   return (
     <>
       <div className="row align-items-center mb-3">
@@ -39,7 +72,10 @@ const List_Maquinaria = ({ datos }) => {
               <font style={{ verticalAlign: "inherit" }}>
                 {datos.permiso.nombre}
               </font>
-              <font style={{ verticalAlign: "inherit" }} className="ms-3 text-secondary fw-normal">
+              <font
+                style={{ verticalAlign: "inherit" }}
+                className="ms-3 text-secondary fw-normal"
+              >
                 Overview
               </font>
             </font>
@@ -55,7 +91,9 @@ const List_Maquinaria = ({ datos }) => {
         <Table responsive hover borderless className="datatable-custom">
           <thead>
             <tr>
-              <th className="table-column-ps-0 sorting bg-warning">Proveedor</th>
+              <th className="table-column-ps-0 sorting bg-warning">
+                Proveedor
+              </th>
               <th className="table-column-ps-0 sorting bg-warning">Codigo</th>
               <th className="table-column-ps-0 sorting bg-warning">Equipo</th>
               <th className="table-column-ps-0 sorting bg-warning">Tipo</th>
@@ -163,27 +201,43 @@ const List_Maquinaria = ({ datos }) => {
                     <Button variant="warning text-nowrap">
                       <VisibilityRoundedIcon /> Ver
                     </Button>
-                    <div style={{ width: "2px" }}></div>
-                    <DropdownButton
-                      variant={`${maquinaria.deletedAt ? "danger" : "warning"}`}
-                      as={ButtonGroup}
-                      title=""
-                      id="acciones-maquinarias"
-                    >
-                      <Dropdown.Item onClick={() => handleShowEdit(maquinaria)}>
-                        <EditSquareIcon /> Editar
-                      </Dropdown.Item>
-                      {!maquinaria.deletedAt && (
-                        <Dropdown.Item className="text-bg-danger">
-                          <DeleteIcon /> Eliminar
-                        </Dropdown.Item>
-                      )}
-                      {maquinaria.deletedAt && (
-                        <Dropdown.Item className="text-bg-success">
-                          <RestoreIcon /> Restaurar
-                        </Dropdown.Item>
-                      )}
-                    </DropdownButton>
+                    {(datos.permiso.edit || datos.permiso["delete"]) && (
+                      <>
+                        <div style={{ width: "2px" }}></div>
+                        <DropdownButton
+                          variant={`${
+                            maquinaria.deletedAt ? "danger" : "warning"
+                          }`}
+                          as={ButtonGroup}
+                          title=""
+                          id="acciones-maquinarias"
+                        >
+                          {datos.permiso.edit && (
+                            <Dropdown.Item
+                              onClick={() => handleShowEdit(maquinaria)}
+                            >
+                              <EditSquareIcon /> Editar
+                            </Dropdown.Item>
+                          )}
+                          {!maquinaria.deletedAt && datos.permiso["delete"] && (
+                            <Dropdown.Item
+                              className="text-bg-danger"
+                              onClick={() => handleShow(maquinaria)}
+                            >
+                              <DeleteIcon /> Eliminar
+                            </Dropdown.Item>
+                          )}
+                          {maquinaria.deletedAt && datos.permiso["delete"] && (
+                            <Dropdown.Item
+                              className="text-bg-info"
+                              onClick={() => handleShow(maquinaria)}
+                            >
+                              <RestoreIcon /> Restaurar
+                            </Dropdown.Item>
+                          )}
+                        </DropdownButton>
+                      </>
+                    )}
                   </ButtonGroup>
                 </td>
               </tr>
@@ -204,6 +258,37 @@ const List_Maquinaria = ({ datos }) => {
           maquinaria={selectedMaquinaria}
           onClose={handleCloseEdit}
         />
+      </Modal>
+      <Modal show={show} onHide={handleClose} size="sm" centered>
+        <Modal.Header
+          closeButton
+          className={`bg-${
+            selectedMaquinaria?.deletedAt ? "info-subtle" : "danger"
+          }`}
+        >
+          <Modal.Title>
+            {selectedMaquinaria?.deletedAt
+              ? "¿Deseas restaurar?"
+              : "¿Deseas eliminar?"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6>Codigo: {selectedMaquinaria?.codigo}</h6>
+          <h4>{selectedMaquinaria?.nombre}</h4>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-between">
+          <Button variant="light fw-bold" onClick={handleClose}>
+            <FaTimes fontSize={22} /> Cancelar
+          </Button>
+          <Button
+            variant={`${
+              selectedMaquinaria?.deletedAt ? "info" : "danger"
+            } fw-bold`}
+            onClick={cancelRestore}
+          >
+            <FaRegSave fontSize={22} /> Confirmar
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );
