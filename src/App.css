@@ -17,6 +17,13 @@ html[data-theme="dark"] {
   --secondary: #F79E1B;
   --accent: #FFC107;
 }
+.recharts-tooltip-label{
+  color: #ffffff !important;
+}
+.recharts-default-tooltip{
+  background: #222 !important;
+  border-radius: 5px !important;
+}
 
 body {
   font-family: 'Nunito Sans', sans-serif;

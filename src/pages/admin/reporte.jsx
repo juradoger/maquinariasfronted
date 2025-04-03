@@ -11,15 +11,25 @@ import { Button, ButtonGroup, Modal, Table } from "react-bootstrap";
 import { red, green } from "@mui/material/colors";
 import { FaTimes, FaRegSave } from "react-icons/fa";
 import Reporte_service from "../../services/reporte";
+import Grafico from "../../custom/grafico";
 
 const Reporte_page = () => {
+  const initialData = JSON.parse(localStorage.getItem("grafica"));
   const [datos, setData] = useState({});
 
   useEffect(() => {
     const fetchList = async () => {
       const result = await Reporte_service();
       setData(result.data);
-      console.log(result);
+
+      const localData = result?.data?.horas?.map((hora, index) => ({
+        name: hora,
+        ganancia: result.data.ganancias[index],
+        perdida: result.data.perdidas[index],
+      }));
+
+      // Guardar en localStorage
+      localStorage.setItem("grafica", JSON.stringify(localData));
     };
 
     fetchList();
@@ -42,6 +52,17 @@ const Reporte_page = () => {
             </h1>
           </div>
           <div className="col-sm-auto"></div>
+        </div>
+        <div className="bg-body-tertiary p-3 mb-3 rounded-3">
+          <Grafico initialData={initialData} />
+          <div className="row mt-3 text-center px-5">
+            <div className="col bg-success rounded-start-pill">
+              <h2 className="fw-bolder">Ganancias: {datos?.totalGanancia} Bs</h2>
+            </div>
+            <div className="col bg-danger rounded-end-pill">
+              <h2 className="fw-bolder">Perdidas: {datos?.totalPerdida} Bs</h2>
+            </div>
+          </div>
         </div>
         <Table responsive hover borderless className="datatable-custom">
           <thead>

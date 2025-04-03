@@ -238,7 +238,7 @@ const VistaPerfil = () => {
                         <img
                           src={data.avatar}
                           alt="Vista previa"
-                          className="img-fluid mb-3"
+                          className="img-fluid mb-3 rounded-circle"
                           style={{ maxHeight: "250px" }}
                         />
                       )}
@@ -246,7 +246,7 @@ const VistaPerfil = () => {
                         <img
                           src={preview}
                           alt="Vista previa"
-                          className="img-fluid mb-3"
+                          className="img-fluid mb-3 rounded-circle"
                           style={{ maxHeight: "250px" }}
                         />
                       )}
