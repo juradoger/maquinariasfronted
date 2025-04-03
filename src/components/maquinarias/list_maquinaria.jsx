@@ -143,7 +143,7 @@ const List_Maquinaria = ({ datos }) => {
                   className="bg-warning bg-opacity-75 text-nowrap align-items-center"
                   style={{ verticalAlign: "middle" }}
                 >
-                  {maquinaria.detalles.Proveedor}
+                  {maquinaria.detalles.Proveedor == null ? ("Marcos Zamorano"): (maquinaria.detalles.Proveedor)}
                 </td>
                 <td
                   className="bg-warning bg-opacity-75 text-nowrap align-items-center"

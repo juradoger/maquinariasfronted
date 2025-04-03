@@ -1,214 +1,363 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+"use client"
 
-const AlquilarMaquinariaForm = () => {
-  const [formData, setFormData] = useState({
-    fax: '',
-    celular: '',
-    website: '',
-    razonSocial: '',
-    direccion: '',
-    codigoPos: '',
-    detallesAdicionales: '',
+import { useState } from "react"
+import "bootstrap/dist/css/bootstrap.min.css"
+import { Container, Form, Button, Row, Col } from "react-bootstrap"
+
+const FormularioAlquilerPago = () => {
+  const [formAlquiler, setFormAlquiler] = useState({
+    fechaEntrega: "",
+    fechaRecogida: "",
+    tiempo: "hora",
+    estado: "",
+    telefono: "",
+    cliente: "",
+    experiencia: "",
+    nombre: "",
+    telefonoCliente: "",
+    direccion: "",
+    tipo: "",
+    codigo: "",
+    modelo: "",
+    costoHora: "",
+    costoDia: "",
+    costoMes: "",
+    costoTotal: "",
     conFactura: true,
-    formatoContrato: 'pdf'
-  });
+    sinFactura: false,
+  })
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'radio' ? value : type === 'checkbox' ? checked : value
-    });
-  };
+  const [validated, setValidated] = useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // Add your form submission logic here
-  };
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    if (form.checkValidity() === false) {
+      event.stopPropagation()
+    } else {
+      console.log("Form submitted:", formAlquiler)
+    }
+    setValidated(true)
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+
+    if (type === "radio" && name === "tiempo") {
+      setFormAlquiler({ ...formAlquiler, tiempo: value })
+    } else if (type === "radio" && name === "factura") {
+      if (value === "conFactura") {
+        setFormAlquiler({ ...formAlquiler, conFactura: true, sinFactura: false })
+      } else {
+        setFormAlquiler({ ...formAlquiler, conFactura: false, sinFactura: true })
+      }
+    } else {
+      setFormAlquiler({ ...formAlquiler, [name]: value })
+    }
+  }
 
   return (
-    <div className="container-fluid p-0" style={{ maxWidth: '550px', margin: '0 auto', backgroundColor: 'rgba(128, 128, 128, 0.8)' }}>
-      <form onSubmit={handleSubmit} className="p-4 text-white">
-        <div className="mb-3">
-          <label htmlFor="detallesMaquinaria" className="form-label small fw-bold">Detalles Maquinaria</label>
-        </div>
+    <Container className="py-4" style={{ backgroundColor: "#4d4d4d", color: "white", maxWidth: "500px" }}>
+      <h2 className="text-center mb-0" style={{ color: "#ffc107" }}>
+        Alquilar
+      </h2>
+      <h5 className="text-center mb-4" style={{ color: "#ffc107", fontWeight: "normal" }}>
+        Maquinaria
+      </h5>
 
-        <div className="row mb-3">
-          <div className="col-6">
-            <label htmlFor="fax" className="form-label small fw-bold">Fax</label>
-            <input
-              type="text"
-              className="form-control"
-              id="fax"
-              name="fax"
-              placeholder="Este campo se llenará automático"
-              value={formData.fax}
-              onChange={handleChange}
-              readOnly
-            />
-          </div>
-          <div className="col-6">
-            <label htmlFor="celular" className="form-label small fw-bold">Celular</label>
-            <input
-              type="text"
-              className="form-control"
-              id="celular"
-              name="celular"
-              placeholder="Este campo se llenará automático"
-              value={formData.celular}
-              onChange={handleChange}
-              readOnly
-            />
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="website" className="form-label small fw-bold">Website</label>
-          <input
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Fecha Inicio</Form.Label>
+          <Form.Control
             type="text"
-            className="form-control"
-            id="website"
-            name="website"
-            placeholder="Este campo se llenará automático"
-            value={formData.website}
-            onChange={handleChange}
-            readOnly
+            placeholder="Ingresa la fecha"
+            name="fechaEntrega"
+            value={formAlquiler.fechaEntrega}
+            onChange={handleInputChange}
+            required
           />
-        </div>
+        </Form.Group>
 
-        <div className="mb-3">
-          <div className="row">
-            <div className="col-md-4">
-              <label htmlFor="razonSocial" className="form-label small fw-bold">Razón Social</label>
-              <input
-                type="text"
-                className="form-control"
-                id="razonSocial"
-                name="razonSocial"
-                placeholder="Este campo se llenará automático"
-                value={formData.razonSocial}
-                onChange={handleChange}
-                readOnly
-              />
-            </div>
-            <div className="col-md-5">
-              <label htmlFor="direccion" className="form-label small fw-bold">Dirección</label>
-              <input
-                type="text"
-                className="form-control"
-                id="direccion"
-                name="direccion"
-                placeholder="Este campo se llenará automático"
-                value={formData.direccion}
-                onChange={handleChange}
-                readOnly
-              />
-            </div>
-            <div className="col-md-3">
-              <label htmlFor="codigoPos" className="form-label small fw-bold">Código Pos</label>
-              <input
-                type="text"
-                className="form-control"
-                id="codigoPos"
-                name="codigoPos"
-                placeholder="Este campo se llenará automático"
-                value={formData.codigoPos}
-                onChange={handleChange}
-                readOnly
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="detallesAdicionales" className="form-label small fw-bold">Detalles Adicionales</label>
-          <input
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Fecha Fin</Form.Label>
+          <Form.Control
             type="text"
-            className="form-control"
-            id="detallesAdicionales"
-            name="detallesAdicionales"
-            placeholder="Este campo se llenará automático"
-            value={formData.detallesAdicionales}
-            onChange={handleChange}
-            readOnly
+            placeholder="Ingresa la fecha de inicio"
+            name="fechaRecogida"
+            value={formAlquiler.fechaRecogida}
+            onChange={handleInputChange}
+            required
           />
-        </div>
+        </Form.Group>
 
-        <div className="mb-4">
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Tiempo de uso</Form.Label>
           <div className="d-flex align-items-center mb-2">
-            <div className="form-check me-4">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="factura"
-                id="conFactura"
-                checked={formData.conFactura}
-                onChange={() => setFormData({...formData, conFactura: true})}
-              />
-              <label className="form-check-label" htmlFor="conFactura">
-                Con factura
-              </label>
-            </div>
-          </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
+            <Form.Check
+              inline
               type="radio"
-              name="factura"
-              id="sinFactura"
-              checked={!formData.conFactura}
-              onChange={() => setFormData({...formData, conFactura: false})}
+              name="tiempo"
+              id="hora"
+              label="Hora"
+              value="hora"
+              checked={formAlquiler.tiempo === "hora"}
+              onChange={handleInputChange}
             />
-            <label className="form-check-label" htmlFor="sinFactura">
-              Sin factura
-            </label>
+            <Form.Check
+              inline
+              type="radio"
+              name="tiempo"
+              id="dia"
+              label="Día"
+              value="dia"
+              checked={formAlquiler.tiempo === "dia"}
+              onChange={handleInputChange}
+            />
+            <Form.Check
+              inline
+              type="radio"
+              name="tiempo"
+              id="mes"
+              label="Mes"
+              value="mes"
+              checked={formAlquiler.tiempo === "mes"}
+              onChange={handleInputChange}
+            />
+            <Button size="sm" variant="light" className="ms-2">
+              Imprimir
+            </Button>
           </div>
-        </div>
+        </Form.Group>
 
-        <div className="d-flex gap-2 mb-3">
-          <button 
-            type="button" 
-            className="btn btn-danger text-white d-flex align-items-center justify-content-center"
-            style={{ width: '130px', height: '40px' }}
-          >
-            <i className="bi bi-file-earmark-pdf-fill me-2"></i>
-            Contrato PDF
-          </button>
-          <button 
-            type="button" 
-            className="btn btn-primary text-white d-flex align-items-center justify-content-center"
-            style={{ width: '130px', height: '40px' }}
-          >
-            <i className="bi bi-file-earmark-word-fill me-2"></i>
-            Contrato DOCX
-          </button>
-        </div>
-        
-        <div className="d-grid mb-2">
-          <button 
-            type="button" 
-            className="btn btn-light"
-            style={{ height: '40px' }}
-          >
-            Cancelar
-          </button>
-        </div>
-        
-        <div className="d-grid">
-          <button 
-            type="button" 
-            className="btn btn-dark"
-            style={{ height: '40px' }}
-          >
-            Alquilar
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
+        <Form.Label style={{ fontSize: "12px" }}>Detalle proveedor</Form.Label>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Estado</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="estado"
+                value={formAlquiler.estado}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Teléfono</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="telefono"
+                value={formAlquiler.telefono}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-export default AlquilarMaquinariaForm;
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Cliente</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Este campo se llenará automático"
+            name="cliente"
+            value={formAlquiler.cliente}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Experiencia del proveedor</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Este campo se llenará automático"
+            name="experiencia"
+            value={formAlquiler.experiencia}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Label style={{ fontSize: "12px" }}>Detalle cliente</Form.Label>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="nombre"
+                value={formAlquiler.nombre}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Teléfono</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="telefonoCliente"
+                value={formAlquiler.telefonoCliente}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Ubicación o dirección</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Este campo se llenará automático"
+            name="direccion"
+            value={formAlquiler.direccion}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Label style={{ fontSize: "12px" }}>Detalle maquinaria</Form.Label>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Tipo</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="tipo"
+                value={formAlquiler.tipo}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Código</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="codigo"
+                value={formAlquiler.codigo}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Modelo</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Este campo se llenará automático"
+            name="modelo"
+            value={formAlquiler.modelo}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+
+        <Row className="mb-3">
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Costo hora</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="costoHora"
+                value={formAlquiler.costoHora}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Costo día</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="costoDia"
+                value={formAlquiler.costoDia}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label style={{ fontSize: "12px" }}>Costo mes</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Este campo se llenará automático"
+                name="costoMes"
+                value={formAlquiler.costoMes}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Form.Group className="mb-3">
+          <Form.Label style={{ fontSize: "12px" }}>Costo total</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Este campo se llenará automático"
+            name="costoTotal"
+            value={formAlquiler.costoTotal}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Check
+            type="radio"
+            name="factura"
+            id="conFactura"
+            label="Con factura"
+            value="conFactura"
+            checked={formAlquiler.conFactura}
+            onChange={handleInputChange}
+          />
+          <Form.Check
+            type="radio"
+            name="factura"
+            id="sinFactura"
+            label="Sin factura"
+            value="sinFactura"
+            checked={formAlquiler.sinFactura}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+
+        <Row className="mb-3">
+          <Col>
+            <Button variant="danger" className="w-100" type="button">
+              Cancelar
+            </Button>
+          </Col>
+          <Col>
+            <Button variant="primary" className="w-100" type="submit">
+              Continuar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Container>
+  )
+}
+
+export default FormularioAlquilerPago
+

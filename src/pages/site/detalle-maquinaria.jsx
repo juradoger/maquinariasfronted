@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import { FaStar } from "react-icons/fa"; // Importing star icon from react-icons
+import { useParams } from "react-router-dom"; // Si estás usando React Router
+import AlquilerMaquinaria from "./alquiler-maquinaria";
+import { Toast } from "react-bootstrap";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+import { red, green } from "@mui/material/colors";
 
 // Custom CSS
 const customStyles = `
@@ -63,40 +69,187 @@ const customStyles = `
 `;
 
 const DetalleMaquinaria = () => {
+  const [showRentModal, setShowRentModal] = useState(false);
+
+  const [showA, setShowA] = useState(true);
+
+  const toggleShowA = () => setShowA(!showA);
+  const [showB, setShowB] = useState(false);
+
+  const toggleShowB = () => setShowB(!showB);
+  const [logueado, setLogueado] = useState(false);
+  // Estado para controlar la visibilidad de la tarjeta de reseñas
+  const [showReviews, setShowReviews] = useState(false);
+
+  // Estados para almacenar datos del backend
   const [maquinaria, setMaquinaria] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [similarEquipment, setSimilarEquipment] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Estados para el formulario de reseña
+  const [puntuacion, setPuntuacion] = useState("5");
+  const [comentario, setComentario] = useState("");
+
+  // Obtener el ID de la maquinaria de los parámetros de la URL (si usas React Router)
+  // Si no usas React Router, puedes pasar el ID como prop o definirlo de otra manera
+  const [id, setId] = useState(0); // ID por defecto: 1
+
+  // URL base de la API
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  // Función para mostrar/ocultar la tarjeta de reseñas
+  const toggleReviews = () => {
+    setShowReviews(!showReviews);
+  };
+
+  // Cargar datos de la maquinaria al montar el componente
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLogueado(true);
+      setShowA(false);
+    }
     const local = JSON.parse(localStorage.getItem("maquinaria")) || [];
     setMaquinaria(local);
-    console.log(local);
-  }, []);
-  const reviews = [
-    {
-      id: 1,
-      rating: 5,
-      text: "Excelente maquinaria, muy eficiente y fácil de usar.",
-      user: "Usuario 1",
-    },
-    {
-      id: 2,
-      rating: 2,
-      text: "Tuve algunos problemas con el mantenimiento.",
-      user: "Usuario 2",
-    },
-  ];
+    setId(local.id);
 
-  const similarEquipment = [
-    { id: 1, name: "Compactador CA2500", image: "/placeholder.jpg" },
-    { id: 2, name: "Rodillo CS54B", image: "/placeholder.jpg" },
-    { id: 3, name: "Compactador CB34B", image: "/placeholder.jpg" },
-  ];
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < rating; i++) {
-      stars.push(<i key={i} className="fas fa-star text-warning"></i>);
+        // Obtener detalles de la maquinaria
+        const maquinariaResponse = await fetch(
+          `${apiUrl}/Maquinarias/${local?.id}`
+        );
+        if (!maquinariaResponse.ok) {
+          throw new Error("No se pudo obtener los datos de la maquinaria");
+        }
+        const maquinariaData = await maquinariaResponse.json();
+        setMaquinaria(maquinariaData);
+
+        // Obtener reseñas de la maquinaria
+        const reviewsResponse = await fetch(
+          `${apiUrl}/Reviews/ByMaquinaria/${local?.id}`
+        );
+        if (reviewsResponse.ok) {
+          const reviewsData = await reviewsResponse.json();
+          setReviews(reviewsData);
+        }
+
+        // Obtener maquinarias similares
+        const similarResponse = await fetch(
+          `${apiUrl}/Maquinarias/Similar/${local?.id}`
+        );
+        if (similarResponse.ok) {
+          const similarData = await similarResponse.json();
+          setSimilarEquipment(similarData);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // Función para enviar una nueva reseña
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Obtener el token de autenticación (si tienes autenticación implementada)
+      const token = localStorage.getItem("token");
+      const headers = token
+        ? {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        : { "Content-Type": "application/json" };
+
+      const id_usuario_local = localStorage.getItem("user_id");
+      console.log(id_usuario_local);
+      const response = await fetch(`${apiUrl}/Reviews`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          puntuacion: parseInt(puntuacion),
+          comentario: comentario,
+          idMaquinaria: parseInt(id),
+          idUsuario: id_usuario_local,
+          // Si tienes autenticación, puedes incluir el ID del usuario actual
+          // idUsuario: currentUser.id
+        }),
+      });
+      /*
+      if (!response.ok) {
+        throw new Error("No se pudo enviar la reseña");
+      }*/
+
+      // Recargar las reseñas para mostrar la nueva
+      const reviewsResponse = await fetch(
+        `${apiUrl}/Reviews/ByMaquinaria/${id}`
+      );
+      if (reviewsResponse.ok) {
+        const reviewsData = await reviewsResponse.json();
+        setReviews(reviewsData);
+      }
+
+      // Limpiar el formulario
+      setPuntuacion("5");
+      setComentario("");
+      setShowB(true);
+      setTimeout(() => {
+        setShowB(false);
+      }, 5000);
+    } catch (err) {
+      alert(`Error al enviar la reseña: ${err.message}`);
     }
-    return stars;
   };
+
+  // Mostrar un mensaje de carga mientras se obtienen los datos
+  if (loading) {
+    return (
+      <div className="bg-dark-custom text-white min-vh-100 d-flex justify-content-center align-items-center">
+        <p>Cargando datos...</p>
+      </div>
+    );
+  }
+
+  // Mostrar un mensaje de error si ocurrió algún problema
+  if (error) {
+    return (
+      <div className="bg-dark-custom text-white min-vh-100 d-flex justify-content-center align-items-center">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
+
+  // Si no hay datos de maquinaria
+  if (!maquinaria) {
+    return (
+      <div className="bg-dark-custom text-white min-vh-100 d-flex justify-content-center align-items-center">
+        <p>No se encontró la maquinaria solicitada</p>
+      </div>
+    );
+  }
+
+  // Calcular el promedio de calificaciones
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, review) => sum + review.puntuacion, 0) /
+          reviews.length
+        ).toFixed(1)
+      : "0.0";
+
+  // Procesar las fotos si existen
+  const fotos = maquinaria.fotos ? maquinaria.fotos : [];
+
   return (
     <>
       <style>{customStyles}</style>
@@ -110,21 +263,21 @@ const DetalleMaquinaria = () => {
                 style={{ height: "300px" }}
               >
                 <img
-                  src={maquinaria?.portada}
-                  alt="Compactador"
+                  src={maquinaria.portada || "/placeholder.jpg"}
+                  alt={maquinaria.nombre}
                   className="w-100 h-100 object-fit-contain"
                 />
               </div>
               <Row className="g-2">
-                {maquinaria?.fotos.map((e, index) => (
+                {fotos.slice(0, 3).map((foto, index) => (
                   <Col xs={4} key={index}>
                     <div
                       className="bg-dark-secondary rounded overflow-hidden"
                       style={{ height: "80px" }}
                     >
                       <img
-                        src={e}
-                        alt="Vista 1"
+                        src={foto || "/placeholder.jpg"}
+                        alt={`Vista ${index + 1}`}
                         className="w-100 h-100 object-fit-cover"
                       />
                     </div>
@@ -135,13 +288,21 @@ const DetalleMaquinaria = () => {
 
             <Col md={6}>
               <div className="mb-4">
-                <h1 className="fs-2 fw-bold">
-                  {maquinaria?.nombre}
-                </h1>
+                <h1 className="fs-2 fw-bold">{maquinaria.nombre}</h1>
                 <div className="d-flex align-items-center mt-1">
-                  <span className="text-yellow">{renderStars(maquinaria?.puntuacionPromedio)}</span>
+                  <span className="text-yellow">
+                    {Array(5)
+                      .fill()
+                      .map((_, i) => (
+                        <span key={i}>
+                          {i < Math.round(parseFloat(averageRating))
+                            ? "★"
+                            : "☆"}
+                        </span>
+                      ))}
+                  </span>
                   <span className="text-secondary ms-2 small">
-                    {!maquinaria?.puntuacionPromedio && ("No tiene reseñas aun")}
+                    ({averageRating} basado en {reviews.length} reseñas)
                   </span>
                 </div>
               </div>
@@ -151,11 +312,7 @@ const DetalleMaquinaria = () => {
                   <h2 className="fs-5 fw-bold mb-2 text-white-custom">
                     DESCRIPCIÓN
                   </h2>
-                  <p className="small text-light">
-                    Compactador vibratorio ideal para suelos y asfalto, con alta
-                    eficiencia y bajo consumo de combustible. Potencia: 173 HP.
-                    Peso operativo: 10,000 kg.
-                  </p>
+                  <p className="small text-light">{maquinaria.descripcion}</p>
                 </Card.Body>
               </Card>
 
@@ -182,98 +339,154 @@ const DetalleMaquinaria = () => {
               </div>
 
               <div>
-                <Button className="btn-yellow w-100 py-2 mb-2 fw-bold">
+                <Button
+                  className="btn-yellow w-100 py-2 mb-2 fw-bold"
+                  disabled={!logueado}
+                  onClick={() => setShowRentModal(true)}
+                >
                   ALQUILAR YA <i className="bi bi-chevron-right ms-1"></i>
                 </Button>
 
-                <Button className="btn-outline-yellow w-100">
+                <AlquilerMaquinaria
+                  id={maquinaria.id}
+                  showRentModal={showRentModal}
+                  setShowRentModal={setShowRentModal}
+                />
+                <Button
+                  className="btn-outline-yellow w-100"
+                  onClick={toggleReviews}
+                >
                   Dejar una reseña
                 </Button>
               </div>
             </Col>
           </Row>
 
-          <Card className="bg-dark-secondary border-0 mb-4 text-white">
-            <Card.Body>
-              <Row>
-                <Col md={6} className="mb-4 mb-md-0">
-                  {reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="border-bottom border-secondary pb-3 mb-3"
-                    >
-                      <div className="d-flex align-items-center mb-2">
-                        <div className="user-avatar">
-                          <span>{review.user.charAt(0)}</span>{" "}
-                          {/* Displaying the initial */}
-                        </div>
-                        <div>
-                          <p className="small fw-medium mb-0">{review.user}</p>
-                          <div className="d-flex">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <FaStar
-                                key={star}
-                                className={`small ${
-                                  star <= review.rating
-                                    ? "text-yellow"
-                                    : "text-secondary"
-                                }`}
-                              />
-                            ))}
+          {/* Tarjeta de reseñas que se muestra/oculta según el estado */}
+          {(showReviews || reviews) && (
+            <Card className="bg-dark-secondary border-0 mb-4 text-white">
+              <Card.Body>
+                <Row>
+                  <Col md={6} className="mb-4 mb-md-0">
+                    {reviews.length > 0 ? (
+                      reviews.map((review) => (
+                        <div
+                          key={review.id}
+                          className="border-bottom border-secondary pb-3 mb-3"
+                        >
+                          <div className="d-flex align-items-center mb-2">
+                            <div className="user-avatar">
+                              <span>
+                                {review.usuario?.nombre?.charAt(0) || "U"}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="small fw-medium mb-0">
+                                {review.usuario
+                                  ? `${review.usuario.nombre} ${review.usuario.apellido}`
+                                  : "Usuario"}
+                              </p>
+                              <div className="d-flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <FaStar
+                                    key={star}
+                                    className={`small ${
+                                      star <= review.puntuacion
+                                        ? "text-yellow"
+                                        : "text-secondary"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
                           </div>
+                          <p className="small text-light">
+                            {review.comentario}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted">
+                        No hay reseñas disponibles para esta maquinaria.
+                      </p>
+                    )}
+                  </Col>
+
+                  <Col md={6}>
+                    <div className="mb-3">
+                      <h3 className="fs-5 fw-bold">Valoraciones</h3>
+                      <div className="d-flex align-items-center">
+                        <span className="fs-3 fw-bold me-1">
+                          {averageRating}
+                        </span>
+                        <div className="d-flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <FaStar
+                              key={star}
+                              className={`${
+                                star <= Math.round(parseFloat(averageRating))
+                                  ? "text-yellow"
+                                  : "text-secondary"
+                              }`}
+                            />
+                          ))}
                         </div>
                       </div>
-                      <p className="small text-light">{review.text}</p>
+                      <p className="small text-secondary">
+                        ({reviews.length} valoraciones)
+                      </p>
                     </div>
-                  ))}
-                </Col>
+                  </Col>
+                </Row>
+                {showReviews && (
+                  <div className="mt-4">
+                    <Form onSubmit={handleSubmitReview}>
+                      <Form.Group className="mb-3">
+                        <Form.Label className="text-light">
+                          Calificación
+                        </Form.Label>
+                        <Form.Select
+                          className="bg-dark-secondary text-white border-secondary mb-3"
+                          value={puntuacion}
+                          onChange={(e) => setPuntuacion(e.target.value)}
+                        >
+                          <option value="5">★★★★★ (5/5)</option>
+                          <option value="4">★★★★ (4/5)</option>
+                          <option value="3">★★★ (3/5)</option>
+                          <option value="2">★★ (2/5)</option>
+                          <option value="1">★ (1/5)</option>
+                        </Form.Select>
+                      </Form.Group>
 
-                <Col md={6}>
-                  <div className="mb-3">
-                    <h3 className="fs-5 fw-bold">Valoraciones</h3>
-                    <div className="d-flex align-items-center">
-                      <span className="fs-3 fw-bold me-1">4.8</span>
-                      <div className="d-flex">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FaStar key={star} className="text-yellow" />
-                        ))}
+                      <Form.Group className="mb-3">
+                        <Form.Label className="text-light">
+                          Comentario
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          className="bg-white text-dark border-0"
+                          placeholder="Ingresa tu comentario"
+                          style={{ height: "80px" }}
+                          value={comentario}
+                          onChange={(e) => setComentario(e.target.value)}
+                        />
+                      </Form.Group>
+
+                      <div className="d-flex justify-content-end">
+                        <Button
+                          type="submit"
+                          className="btn-yellow"
+                          disabled={!logueado}
+                        >
+                          Postear <i className="bi bi-arrow-right ms-1"></i>
+                        </Button>
                       </div>
-                    </div>
-                    <p className="small text-secondary">(20 valoraciones)</p>
+                    </Form>
                   </div>
-                </Col>
-              </Row>
-
-              <div className="mt-4">
-                <Form.Group className="mb-3">
-                  <Form.Label className="text-light">Calificación</Form.Label>
-                  <Form.Select className="bg-dark-secondary text-white border-secondary mb-3">
-                    <option value="5">★★★★★ (5/5)</option>
-                    <option value="4">★★★★ (4/5)</option>
-                    <option value="3">★★★ (3/5)</option>
-                    <option value="2">★★ (2/5)</option>
-                    <option value="1">★ (1/5)</option>
-                  </Form.Select>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label className="text-light">Comentario</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    className="bg-white text-dark border-0"
-                    placeholder="Ingresa tu comentario"
-                    style={{ height: "80px" }}
-                  />
-                </Form.Group>
-
-                <div className="d-flex justify-content-end">
-                  <Button className="btn-yellow">
-                    Postear <i className="bi bi-arrow-right ms-1"></i>
-                  </Button>
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
+                )}
+              </Card.Body>
+            </Card>
+          )}
 
           <div>
             <h2 className="fs-4 fw-bold mb-3">Equipos Similares</h2>
@@ -283,14 +496,14 @@ const DetalleMaquinaria = () => {
                   <Card className="similar-equipment-card">
                     <div style={{ height: "120px" }}>
                       <img
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.name}
+                        src={item.portada || "/placeholder.svg"}
+                        alt={item.nombre}
                         className="w-100 h-100 similar-equipment-img"
                       />
                     </div>
                     <Card.Body className="p-2">
                       <p className="small fw-medium text-truncate mb-0">
-                        {item.name}
+                        {item.nombre}
                       </p>
                     </Card.Body>
                   </Card>
@@ -300,6 +513,29 @@ const DetalleMaquinaria = () => {
           </div>
         </Container>
       </div>
+
+      <Toast
+        show={showA}
+        onClose={toggleShowA}
+        className="position-fixed bottom-0 end-0 m-3 border-danger-subtle"
+        bg="danger-subtle"
+      >
+        <Toast.Header className="text-bg-danger">
+          <WarningRoundedIcon sx={{ color: red[100] }} />
+          <strong className="ms-2 me-auto">Debes estar registrado</strong>
+        </Toast.Header>
+      </Toast>
+      <Toast
+        show={showB}
+        onClose={toggleShowB}
+        className="position-fixed bottom-0 end-0 m-3 border-danger-subtle"
+        bg="danger-subtle"
+      >
+        <Toast.Header className="text-bg-success">
+          <WarningRoundedIcon sx={{ color: green[100] }} />
+          <strong className="ms-2 me-auto">Se guardo tu reseña</strong>
+        </Toast.Header>
+      </Toast>
     </>
   );
 };

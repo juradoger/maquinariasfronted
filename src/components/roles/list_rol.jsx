@@ -9,7 +9,13 @@ import Edit_Rol from "./edit_rol";
 import New_Rol from "./new_rol";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PlaylistAddCheckRoundedIcon from "@mui/icons-material/PlaylistAddCheckRounded";
+import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
+import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
 import { Button, ButtonGroup, Modal, Table } from "react-bootstrap";
+import { red, green } from "@mui/material/colors";
+import { FaTimes, FaRegSave } from "react-icons/fa";
+import ViewUsuarioRol from "./view_usuario";
 
 const Permisos_structure = {
   Usuarios: {
@@ -101,6 +107,16 @@ const List_Rol = ({ datos }) => {
     setSelectedMaquinaria(null);
   };
 
+  const [selectId, setSelectId] = useState(null);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (e) => {
+    setSelectId(e);
+    setShow(true);
+    console.log(e);
+  };
+
   return (
     <>
       <div className="row align-items-center mb-3">
@@ -134,6 +150,33 @@ const List_Rol = ({ datos }) => {
             <th className="table-column-ps-0 sorting bg-warning">ID</th>
             <th className="table-column-ps-0 sorting bg-warning">Nombre</th>
             <th className="table-column-ps-0 sorting bg-warning">Acciones</th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Usuarios
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Roles
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Maquinarias
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Mantenimientos
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Reservas
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Contratos
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Reviews
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Comprobantes
+            </th>
+            <th className="table-column-ps-0 sorting bg-warning fst-italic">
+              Reporte
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -161,11 +204,106 @@ const List_Rol = ({ datos }) => {
                       <EditSquareIcon /> Editar
                     </Button>
                   )}
+                  {datos.permiso.view && (
+                    <Button
+                      variant="info text-nowrap"
+                      onClick={() => handleShow(e.id)}
+                    >
+                      <GroupsRoundedIcon /> Listar usuarios
+                    </Button>
+                  )}
                 </ButtonGroup>
               </td>
-              <td>{e.permisos?.Usuarios?.view ? "✔️" : "❌"}</td>
-              <td>{e.permisos?.Maquinarias?.view ? "✔️" : "❌"}</td>
-              <td>{e.permisos?.Roles?.view ? "✔️" : "❌"}</td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Usuarios?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Roles?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Maquinarias?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Mantenimientos?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Reservas?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Contratos?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Reviews?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Comprobantes?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
+              <td className="text-center" style={{ verticalAlign: "middle" }}>
+                {e.permisos?.Reporte?.view ? (
+                  <PlaylistAddCheckRoundedIcon
+                    fontSize="large"
+                    className="text-info"
+                  />
+                ) : (
+                  <BlockRoundedIcon fontSize="large" className="text-danger" />
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -184,6 +322,22 @@ const List_Rol = ({ datos }) => {
           estructura={Permisos_structure}
           roleId={selectedRoleId}
         />
+      </Modal>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+        fullscreen={true}
+        scrollable
+      >
+        {selectId && <ViewUsuarioRol id={selectId} />}
+        <Modal.Footer className="border-top-0">
+          <Button variant="light fw-bold" onClick={handleClose}>
+            <FaTimes fontSize={22} /> Cerrar
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

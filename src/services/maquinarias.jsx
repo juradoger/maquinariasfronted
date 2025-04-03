@@ -39,6 +39,11 @@ const Maquinarias_service = async () => {
 
 export default Maquinarias_service;
 
+const formatMaquinariaDataCreate = (data) => ({
+  ...data,
+  detalles: JSON.stringify(data.detalles).replace(/"/g, '"'),
+  tipo: JSON.stringify(data.tipo).replace(/"/g, '"'),
+});
 const formatMaquinariaData = (data) => ({
   ...data,
   detalles: JSON.stringify(data.detalles).replace(/"/g, '"'),
@@ -47,7 +52,7 @@ const formatMaquinariaData = (data) => ({
 });
 
 export const CreateMaquinaria = (maquinariaData) => {
-  const data = formatMaquinariaData(maquinariaData);
+  const data = formatMaquinariaDataCreate(maquinariaData);
   console.log("Datos a enviar al servidor:", data); // Solo mostramos los datos en consola por ahora
   return new Promise((resolve) => {
     $.ajax({

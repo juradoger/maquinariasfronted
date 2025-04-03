@@ -107,9 +107,16 @@ export default function Header() {
                 >
                   Inicio
                 </NavLink>
+                <NavLink
+                  to="/lista"
+                  className="text-black fs-5 fw-bolder text-nowrap nav-link"
+                >
+                  Máquinas en Alquiler
+                </NavLink>
+                {/* 
                 {!perfil && (
                   <NavLink
-                    to="/buscar/maquinarias"
+                    to="/lista"
                     className="text-black fs-5 fw-bolder text-nowrap nav-link"
                   >
                     Máquinas en Alquiler
@@ -128,7 +135,7 @@ export default function Header() {
                       Maquinarias Seleccionadas
                     </NavDropdown.Item>
                   </NavDropdown>
-                )}
+                )}*/}
                 {perfil && perfil.roles && perfil.roles.length > 0 && (
                   <NavDropdown
                     className="text-black fs-5 fw-bolder text-nowrap"
